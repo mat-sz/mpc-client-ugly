@@ -8,6 +8,8 @@ const App: React.FC = () => {
     const [ authenticationToken, setAuthenticationToken ] = useState('');
     const [ authenticationState, setAuthenticationState ] = useState('');
 
+    const [ playbackState, setPlaybackState ] = useState('');
+
     const onChangeServerUrl = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setServerUrl(e.target.value), [ setServerUrl ]);
     const onChangeAuthenticationKey = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setAuthenticationKey(e.target.value), [ setAuthenticationKey ]);
     const onChangeAuthenticationToken = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setAuthenticationToken(e.target.value), [ setAuthenticationToken ]);
@@ -38,6 +40,17 @@ const App: React.FC = () => {
         setAuthenticationState(JSON.stringify(state, null, 4));
     }, [ authenticationKey, serverUrl, setAuthenticationState, setAuthenticationToken ]);
 
+    const playbackCheckState = useCallback(async () => {
+        const res = await fetch(serverUrl + 'playback', {
+            headers: {
+                authorization: authenticationToken
+            }
+        });
+        const state: any = await res.json();
+
+        setPlaybackState(JSON.stringify(state, null, 4));
+    }, [ serverUrl, setPlaybackState, authenticationToken ]);
+
     return (
         <div className="App">
             <h1>mpc-client-ugly</h1>
@@ -54,6 +67,13 @@ const App: React.FC = () => {
                 <button onClick={authenticationCheckState}>State</button>
                 <pre>
                     { authenticationState }
+                </pre>
+            </section>
+            <section>
+                <h2>Playback</h2>
+                <button onClick={playbackCheckState}>State</button>
+                <pre>
+                    { playbackState }
                 </pre>
             </section>
         </div>
