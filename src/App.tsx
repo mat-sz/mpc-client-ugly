@@ -57,6 +57,28 @@ const App: React.FC = () => {
         setPlaybackState(JSON.stringify(state, null, 4));
     }, [ serverUrl, setPlaybackState, authenticationToken ]);
 
+    const playbackNext = useCallback(async () => {
+        await fetch(serverUrl + 'playback/next', {
+            method: 'POST',
+            headers: {
+                authorization: authenticationToken
+            }
+        });
+        
+        playbackCheckState();
+    }, [ serverUrl, authenticationToken, playbackCheckState ]);
+
+    const playbackPrevious = useCallback(async () => {
+        await fetch(serverUrl + 'playback/previous', {
+            method: 'POST',
+            headers: {
+                authorization: authenticationToken
+            }
+        });
+        
+        playbackCheckState();
+    }, [ serverUrl, authenticationToken, playbackCheckState ]);
+
     return (
         <div className="App">
             <h1>mpc-client-ugly</h1>
@@ -78,6 +100,8 @@ const App: React.FC = () => {
             <section>
                 <h2>Playback</h2>
                 <button onClick={playbackCheckState}>State</button>
+                <button onClick={playbackPrevious}>Previous</button>
+                <button onClick={playbackNext}>Next</button>
                 <pre>
                     { playbackState }
                 </pre>
