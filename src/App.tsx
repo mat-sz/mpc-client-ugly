@@ -24,12 +24,6 @@ const App: React.FC = () => {
         setAuthenticationKey(json.data.key)
     }, [ serverUrl, setAuthenticationKey ]);
 
-    const authenticationContinue = useCallback(() => {
-        if (!authenticationKey) return;
-
-        const continueWindow = window.open(serverUrl + 'auth/continue?key=' +  authenticationKey, '', 'width=800&height=600');
-    }, [ authenticationKey, serverUrl ]);
-
     const authenticationCheckState = useCallback(async () => {
         const res = await fetch(serverUrl + 'auth/state?key=' + authenticationKey);
         const state: any = await res.json();
@@ -39,6 +33,18 @@ const App: React.FC = () => {
 
         setAuthenticationState(JSON.stringify(state, null, 4));
     }, [ authenticationKey, serverUrl, setAuthenticationState, setAuthenticationToken ]);
+
+    const authenticationContinue = useCallback(() => {
+        if (!authenticationKey) return;
+
+        const continueWindow = window.open(serverUrl + 'auth/continue?key=' +  authenticationKey, '', 'width=800&height=600');
+
+        if (continueWindow) {
+            continueWindow.onunload = () => {
+                authenticationCheckState();
+            };
+        }
+    }, [ authenticationKey, serverUrl, authenticationCheckState ]);
 
     const playbackCheckState = useCallback(async () => {
         const res = await fetch(serverUrl + 'playback', {
