@@ -3,11 +3,14 @@ import './App.scss';
 
 const App: React.FC = () => {
     const [ serverUrl, setServerUrl ] = useState('http://localhost:4000/');
+
     const [ authenticationKey, setAuthenticationKey ] = useState('');
+    const [ authenticationToken, setAuthenticationToken ] = useState('');
     const [ authenticationState, setAuthenticationState ] = useState('');
 
     const onChangeServerUrl = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setServerUrl(e.target.value), [ setServerUrl ]);
     const onChangeAuthenticationKey = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setAuthenticationKey(e.target.value), [ setAuthenticationKey ]);
+    const onChangeAuthenticationToken = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setAuthenticationToken(e.target.value), [ setAuthenticationToken ]);
 
     const authenticationBegin = useCallback(async () => {
         let res = await fetch(serverUrl + 'auth', {
@@ -26,10 +29,14 @@ const App: React.FC = () => {
     }, [ authenticationKey, serverUrl ]);
 
     const authenticationCheckState = useCallback(async () => {
-        let res = await fetch(serverUrl + 'auth/state?key=' + authenticationKey);
+        const res = await fetch(serverUrl + 'auth/state?key=' + authenticationKey);
+        const state: any = await res.json();
+        if (state.data.token) {
+            setAuthenticationToken(state.data.token);
+        }
 
-        setAuthenticationState(await res.text());
-    }, [ authenticationKey, serverUrl, setAuthenticationState ]);
+        setAuthenticationState(JSON.stringify(state, null, 4));
+    }, [ authenticationKey, serverUrl, setAuthenticationState, setAuthenticationToken ]);
 
     return (
         <div className="App">
@@ -41,6 +48,7 @@ const App: React.FC = () => {
             <section>
                 <h2>Authentication</h2>
                 <input type="text" value={authenticationKey} onChange={onChangeAuthenticationKey} placeholder="Authentication key" />
+                <input type="text" value={authenticationToken} onChange={onChangeAuthenticationToken} placeholder="Token" />
                 <button onClick={authenticationBegin}>Begin</button>
                 <button onClick={authenticationContinue}>Continue</button>
                 <button onClick={authenticationCheckState}>State</button>
