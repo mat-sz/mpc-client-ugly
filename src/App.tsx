@@ -7,7 +7,6 @@ import Server from './sections/Server';
 const App: React.FC = () => {
     const [ serverUrl, setServerUrl ] = useState('http://localhost:4000/');
 
-    const [ authenticationKey, setAuthenticationKey ] = useState('');
     const [ authenticationToken, setAuthenticationToken ] = useState('');
 
     return (
@@ -19,9 +18,7 @@ const App: React.FC = () => {
             />
             <Authentication
                 serverUrl={serverUrl}
-                authenticationKey={authenticationKey}
                 authenticationToken={authenticationToken}
-                setAuthenticationKey={setAuthenticationKey}
                 setAuthenticationToken={setAuthenticationToken}
             />
             <Playback

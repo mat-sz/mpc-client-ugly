@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 
 const Authentication: React.FC<{
     serverUrl: string,
-    authenticationKey: string, setAuthenticationKey: (key: string) => void,
     authenticationToken: string, setAuthenticationToken: (token: string) => void
-}> = ({ serverUrl, authenticationKey, authenticationToken, setAuthenticationKey, setAuthenticationToken }) => {
+}> = ({ serverUrl, authenticationToken, setAuthenticationToken }) => {
+    const [ authenticationKey, setAuthenticationKey ] = useState('');
     const [ authenticationState, setAuthenticationState ] = useState('');
 
     const onChangeAuthenticationKey = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setAuthenticationKey(e.target.value), [ setAuthenticationKey ]);
